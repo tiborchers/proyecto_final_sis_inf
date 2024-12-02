@@ -1,11 +1,18 @@
 from flask import Flask, request, jsonify
 from influxdb_client import InfluxDBClient, Point, WriteOptions
+import json
 
 app = Flask(__name__)
 
+
+file_path = "token.json"
+with open(file_path, 'r') as file:
+    data = json.load(file)
+    token=data["token"]
+
 # Configuración de InfluxDB
 INFLUXDB_URL = "https://eu-central-1-1.aws.cloud2.influxdata.com"  # URL de tu servidor InfluxDB
-INFLUXDB_TOKEN = ""  # Token de autenticación
+INFLUXDB_TOKEN = token  # Token de autenticación
 INFLUXDB_ORG = "ProyectoFinalSisInf"  # Nombre de la organización
 INFLUXDB_BUCKET = "proyecto_final"  # Nombre del bucket en InfluxDB
 
