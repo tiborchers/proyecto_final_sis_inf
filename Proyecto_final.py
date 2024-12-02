@@ -57,13 +57,13 @@ def read_sensors():
     except Exception as e:
         return jsonify({"error": repr(e)}), 500
 
-@app.route('/sensor_values', methods=['GET', 'POST'])
+@app.route('/sensor_values', methods=['GET'])
 def get_sensor_values():
 
     try:
         query = f'''
         from(bucket: "{INFLUXDB_BUCKET}")
-        |> range(start: -1h)  // Fetch data from the last hour
+        |> range(start: -1h)
         |> filter(fn: (r) => r._measurement == "mediciones")
         '''
 
