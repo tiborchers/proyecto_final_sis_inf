@@ -37,13 +37,14 @@ def read_sensors():
         content = request.get_json()
 
         # Validación de los campos
-        required_fields = ['temperatura', 'humedad', 'distancia1', 'distancia2', 'contador']
+        required_fields = ['temperatura', 'humedad', 'distancia1', 'distancia2', 'contador', 'sensor_id']
         
         if not all(field in content for field in required_fields):
             return jsonify({"error": "Faltan campos en los datos recibidos"}), 400
 
         # Crear un punto para InfluxDB
         point = Point("mediciones") \
+            .tag("sensor_id", content["sensor_id"]) \
             .field("temperatura", content['temperatura']) \
             .field("humedad", content['humedad']) \
             .field("distancia1", content['distancia1']) \
@@ -83,6 +84,7 @@ def get_sensor_values():
             for record in table.records:
                 results.append({
                     "time": record.get_time(),
+                    "sensor_id": record["sensor_id"],
                     "field": record.get_field(),
                     "value": record.get_value()
                 })
