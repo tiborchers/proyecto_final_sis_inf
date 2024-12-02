@@ -1,6 +1,5 @@
 from flask import Flask, request, jsonify
 from influxdb_client import InfluxDBClient, Point, WriteOptions
-import os
 
 app = Flask(__name__)
 
@@ -15,6 +14,7 @@ client = InfluxDBClient(url=INFLUXDB_URL, token=INFLUXDB_TOKEN, org=INFLUXDB_ORG
 
 # Obtener el escritor de datos
 write_api = client.write_api(write_options=WriteOptions(batch_size=1))
+query_api = client.query_api()
 
 @app.route('/')
 def index():
@@ -55,11 +55,34 @@ def read_sensors():
         }), 200
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": repr(e)}), 500
 
-@app.route('/sensor_values', methods=['GET'])
+@app.route('/sensor_values', methods=['GET', 'POST'])
 def get_sensor_values():
-    return jsonify({"message": "Acción GET no implementada con InfluxDB"}), 404
+
+    try:
+        query = f'''
+        from(bucket: "{INFLUXDB_BUCKET}")
+        |> range(start: -1h)  // Fetch data from the last hour
+        |> filter(fn: (r) => r._measurement == "mediciones")
+        '''
+
+        tables = query_api.query(query)
+
+        results = []
+        for table in tables:
+            for record in table.records:
+                results.append({
+                    "time": record.get_time(),
+                    "sensor": record["sensor"],
+                    "field": record.get_field(),
+                    "value": record.get_value()
+                })
+        
+        return jsonify(results), 200
+    except Exception as e:
+        return jsonify({"error": repr(e)}), 500
+
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000)
