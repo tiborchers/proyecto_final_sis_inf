@@ -43,8 +43,8 @@ def read_sensors():
             return jsonify({"error": "Faltan campos en los datos recibidos"}), 400
 
         # Crear un punto para InfluxDB
-        point = Point("mediciones") \
-            .tag("sensor_id", content["sensor_id"]) \
+        point = Point("animal_feeder") \
+            .tag("sensor_id", str(content["sensor_id"])) \
             .field("temperatura", content['temperatura']) \
             .field("humedad", content['humedad']) \
             .field("distancia1", content['distancia1']) \
@@ -90,6 +90,107 @@ def get_sensor_values():
                 })
         
         return jsonify(results), 200
+    except Exception as e:
+        return jsonify({"error": repr(e)}), 500
+
+@app.route('/alert_humedad', methods=['GET'])
+def read_sensors():
+    try:
+
+        # Crear un punto para InfluxDB
+        point = Point("animal_feeder") \
+            .tag("sensor_id", "s1") \
+            .field("temperatura",19.09 ) \
+            .field("humedad", 86) \
+            .field("distancia1", 20) \
+            .field("distancia2", 177) \
+            .field("contador", 0)
+
+        # Escribir el punto en InfluxDB
+        write_api.write(bucket=INFLUXDB_BUCKET, record=point)
+
+        # Confirmación de recepción de los datos
+        return jsonify({
+            "status": "Recibido correctamente!"
+        }), 200
+
+    except Exception as e:
+        return jsonify({"error": repr(e)}), 500
+
+
+if __name__ == '__main__':
+    #app.run(host="0.0.0.0", port=5000)
+    app.run()
+
+@app.route('/alert_temperatura', methods=['GET'])
+def read_sensors():
+    try:
+
+        # Crear un punto para InfluxDB
+        point = Point("animal_feeder") \
+            .tag("sensor_id", "s1") \
+            .field("temperatura",40.05 ) \
+            .field("humedad", 79) \
+            .field("distancia1", 20) \
+            .field("distancia2", 177) \
+            .field("contador", 0)
+
+        # Escribir el punto en InfluxDB
+        write_api.write(bucket=INFLUXDB_BUCKET, record=point)
+
+        # Confirmación de recepción de los datos
+        return jsonify({
+            "status": "Recibido correctamente!"
+        }), 200
+
+    except Exception as e:
+        return jsonify({"error": repr(e)}), 500
+
+@app.route('/alert_contenedor', methods=['GET'])
+def read_sensors():
+    try:
+
+        # Crear un punto para InfluxDB
+        point = Point("animal_feeder") \
+            .tag("sensor_id", "s1") \
+            .field("temperatura",19 ) \
+            .field("humedad", 79) \
+            .field("distancia1", 35) \
+            .field("distancia2", 177) \
+            .field("contador", 0)
+
+        # Escribir el punto en InfluxDB
+        write_api.write(bucket=INFLUXDB_BUCKET, record=point)
+
+        # Confirmación de recepción de los datos
+        return jsonify({
+            "status": "Recibido correctamente!"
+        }), 200
+
+    except Exception as e:
+        return jsonify({"error": repr(e)}), 500
+
+@app.route('/alert_contador', methods=['GET'])
+def read_sensors():
+    try:
+
+        # Crear un punto para InfluxDB
+        point = Point("animal_feeder") \
+            .tag("sensor_id", "s1") \
+            .field("temperatura",19 ) \
+            .field("humedad", 79) \
+            .field("distancia1", 20) \
+            .field("distancia2", 177) \
+            .field("contador", 1)
+
+        # Escribir el punto en InfluxDB
+        write_api.write(bucket=INFLUXDB_BUCKET, record=point)
+
+        # Confirmación de recepción de los datos
+        return jsonify({
+            "status": "Recibido correctamente!"
+        }), 200
+
     except Exception as e:
         return jsonify({"error": repr(e)}), 500
 
