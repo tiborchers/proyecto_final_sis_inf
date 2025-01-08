@@ -21,7 +21,7 @@
 #define ECHO_sensor_2     17
 
 const char* ssid = "DIGIFIBRA-hPb3";
-const char* password =  "cxKcQHQZDcUD";
+const char* password =  "";
 long tiempo1, tiempo2;
 float distancia1, distancia2, humedad, temperatura;
 // Configura el servidor NTP
