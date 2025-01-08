@@ -127,7 +127,7 @@ void loop() {
 
     
     StaticJsonDocument<200> doc;
-     doc["s1"] = Sist1;
+    doc["sensor_id"] = "s1";
     doc["temperatura"] = temperatura;
     doc["humedad"] = humedad;
     doc["distancia1"] = distancia1;
